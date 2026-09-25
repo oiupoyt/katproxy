@@ -61,8 +61,8 @@ const el = {
   toastContainer: document.getElementById('toast-container')
 };
 
-// SVG Circle circumference: 2 * Math.PI * 11 ≈ 69.11
-const CIRCUMFERENCE = 69.11;
+// SVG Circle circumference: 2 * Math.PI * 6 ≈ 37.7
+const CIRCUMFERENCE = 37.7;
 
 /**
  * Toast Notification Helper
