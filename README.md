@@ -2,8 +2,8 @@
 
 Minimal proxy list aggregator and live TCP latency prober.
 
-- **Frontend**: [katproxy.oiupoyt.space](https://katproxy.oiupoyt.space)
-- **Backend API**: [katproxy-api.oiupoyt.space](https://katproxy-api.oiupoyt.space)
+↗ [katproxy.oiupoyt.space](https://katproxy.oiupoyt.space)
+
 
 ---
 
