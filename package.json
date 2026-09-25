@@ -1,0 +1,17 @@
+{
+  "name": "katproxy",
+  "version": "1.0.0",
+  "description": "Minimal, sleek multi-source proxy list stream & active latency tester",
+  "scripts": {
+    "start": "node backend/server.js",
+    "backend": "cd backend && npm start",
+    "dev": "cd backend && npm run dev"
+  },
+  "keywords": ["proxy", "socks5", "socks4", "http", "stream", "minimal"],
+  "author": "oiupoyt",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

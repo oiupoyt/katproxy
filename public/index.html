@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>katproxy — minimal proxy stream</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          <span class="brand-name">katproxy</span>
+          <span class="brand-badge">LIVE</span>
+        </div>
+        <p class="brand-subtitle">Curated, multi-source proxy stream with live TCP verification</p>
+      </div>
+
+      <div class="header-right">
+        <!-- Stats Pills -->
+        <div class="stats-group">
+          <div class="stat-pill" title="Total aggregated proxies">
+            <span class="stat-label">TOTAL</span>
+            <span class="stat-value" id="stat-total">—</span>
+          </div>
+          <div class="stat-pill" title="Alive / verified proxies">
+            <span class="stat-label">ALIVE</span>
+            <span class="stat-value highlight-emerald" id="stat-alive">—</span>
+          </div>
+          <div class="stat-pill" title="Average verified response latency">
+            <span class="stat-label">AVG PING</span>
+            <span class="stat-value highlight-cyan" id="stat-latency">—</span>
+          </div>
+        </div>
+
+        <!-- Refresh Countdown & Trigger -->
+        <div class="refresh-control">
+          <div class="timer-widget" title="Auto-refresh countdown">
+            <svg class="progress-ring" width="28" height="28">
+              <circle class="progress-ring-bg" stroke="#27272a" stroke-width="2.5" fill="transparent" r="11" cx="14" cy="14" />
+              <circle class="progress-ring-circle" id="progress-circle" stroke="#10b981" stroke-width="2.5" stroke-dasharray="69.11" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" r="11" cx="14" cy="14" />
+            </svg>
+            <span class="timer-text" id="timer-text">--s</span>
+          </div>
+          <button class="btn btn-icon" id="btn-manual-refresh" title="Force refresh upstream sources">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+          </button>
+          <button class="btn btn-icon" id="btn-settings" title="API Settings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Controls & Filters Bar -->
+    <section class="controls-bar">
+      <!-- Protocol Filters -->
+      <div class="filter-pills" id="protocol-filters">
+        <button class="pill-btn active" data-protocol="all">ALL</button>
+        <button class="pill-btn" data-protocol="http">HTTP</button>
+        <button class="pill-btn" data-protocol="socks4">SOCKS4</button>
+        <button class="pill-btn" data-protocol="socks5">SOCKS5</button>
+      </div>
+
+      <!-- Alive Toggle -->
+      <label class="toggle-control" title="Show only verified responsive proxies">
+        <input type="checkbox" id="toggle-alive" checked>
+        <span class="toggle-slider"></span>
+        <span class="toggle-label">Verified Alive</span>
+      </label>
+
+      <!-- Search Input -->
+      <div class="search-box">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search IP, port, country, org..." spellcheck="false" autocomplete="off">
+        <button class="search-clear hidden" id="search-clear">&times;</button>
+      </div>
+
+      <!-- Sort Selection -->
+      <div class="select-wrapper">
+        <select id="sort-select" title="Sort order">
+          <option value="latency_asc">Lowest Ping</option>
+          <option value="latency_desc">Highest Ping</option>
+          <option value="country">Country (A-Z)</option>
+          <option value="port">Port Number</option>
+        </select>
+        <svg class="select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-secondary" id="btn-copy-all" title="Copy currently filtered list to clipboard">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Visible</span>
+        </button>
+
+        <button class="btn btn-secondary" id="btn-export-txt" title="Download raw IP:Port text file">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Export TXT</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="main-content">
+      <!-- Status Banner (when searching or zero results) -->
+      <div class="list-meta">
+        <span id="results-count">Loading proxies...</span>
+        <span id="checking-indicator" class="checking-indicator hidden">
+          <span class="spin-dot"></span> Checking live latencies...
+        </span>
+      </div>
+
+      <!-- Proxy Cards Grid -->
+      <div class="proxy-grid" id="proxy-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state hidden" id="empty-state">
+        <div class="empty-icon">⚲</div>
+        <h3>No matching proxies found</h3>
+        <p>Try easing your filters or searching with a different term.</p>
+        <button class="btn btn-secondary" id="btn-reset-filters">Reset Filters</button>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="pagination-bar" id="pagination-bar">
+        <button class="btn btn-sm" id="btn-prev" disabled>&larr; Prev</button>
+        <span class="page-indicator" id="page-indicator">Page 1 of 1</span>
+        <button class="btn btn-sm" id="btn-next">Next &rarr;</button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <span>katproxy &bull; hosted on tablet via cloudflared</span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/oiupoyt/katproxy" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a>
+        <span class="separator">&bull;</span>
+        <a id="link-raw-api" href="#" target="_blank" class="footer-link">Raw API</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="settings-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Backend API Configuration</h3>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="api-url-input">API Base URL</label>
+        <input type="text" id="api-url-input" class="modal-input" placeholder="https://katproxy-api.oiupoyt.space">
+        <p class="modal-hint">Cloudflare Tunnel endpoint (public) or direct LAN address (e.g. <code>http://192.168.0.104:5050</code>).</p>
+        
+        <div class="quick-endpoints">
+          <button class="btn btn-xs" data-url="https://katproxy-api.oiupoyt.space">Cloudflare Tunnel</button>
+          <button class="btn btn-xs" data-url="http://192.168.0.104:5050">Local LAN</button>
+          <button class="btn btn-xs" data-url="http://localhost:5050">Localhost</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="modal-save">Save & Reconnect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
