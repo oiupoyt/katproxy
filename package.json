@@ -3,15 +3,11 @@
   "version": "1.0.0",
   "description": "Minimal, sleek multi-source proxy list stream & active latency tester",
   "scripts": {
-    "start": "node backend/server.js",
-    "backend": "cd backend && npm start",
-    "dev": "cd backend && npm run dev"
+    "start": "cd backend && cargo run --release",
+    "build": "cd backend && cargo build --release",
+    "dev": "cd backend && cargo run"
   },
-  "keywords": ["proxy", "socks5", "socks4", "http", "stream", "minimal"],
+  "keywords": ["proxy", "socks5", "socks4", "http", "stream", "minimal", "rust", "axum"],
   "author": "oiupoyt",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
-  }
+  "license": "MIT"
 }

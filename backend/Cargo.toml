@@ -1,0 +1,26 @@
+[package]
+name = "katproxy-backend"
+version = "1.0.0"
+edition = "2021"
+authors = ["oiupoyt"]
+description = "High-performance minimal Rust proxy aggregator and latency tester"
+
+[dependencies]
+axum = { version = "0.7", default-features = false, features = ["tokio", "http1", "http2", "json", "matched-path", "query"] }
+tokio = { version = "1.38", features = ["full"] }
+tower = { version = "0.4", features = ["util"] }
+tower-http = { version = "0.5", features = ["cors", "trace", "fs", "compression-full"] }
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true

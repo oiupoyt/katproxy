@@ -41,7 +41,7 @@ curl -s "https://katproxy-api.oiupoyt.space/api/raw?protocol=socks5&alive=true"
 
 ## Architecture
 
-- **Backend (`/backend`)**: Node.js service running on port `5050` with controlled memory allocation (`--max-old-space-size=256`). Includes background socket prober and auto-refresh worker.
+- **Backend (`/backend`)**: High-performance Rust (Axum + Tokio) service running on port `5050`. Features non-blocking TCP socket prober and automated refresh background worker.
 - **Frontend (`/public`)**: Vanilla JavaScript, CSS, and HTML with JetBrains Mono typography, auto-refresh countdown, and one-click copy actions.
 - **Tunnel**: Managed by `cloudflared` routing `katproxy-api.oiupoyt.space` to `localhost:5050`.
 

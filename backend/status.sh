@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 cd "$(dirname "$0")"
 
-echo "=== KatProxy Backend Status ==="
+echo "=== KatProxy Backend (Rust) Status ==="
 if [ -f katproxy.pid ]; then
   PID=$(cat katproxy.pid)
   if ps -p "$PID" > /dev/null 2>&1; then

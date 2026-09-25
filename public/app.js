@@ -3,14 +3,12 @@
  */
 
 // Configuration & State
-const DEFAULT_TUNNEL_URL = 'https://katproxy-api.oiupoyt.space';
+const DEFAULT_API_URL = 'https://katproxy-api.oiupoyt.space';
 const LOCAL_DEV_URL = 'http://localhost:5050';
 
-let apiBase = localStorage.getItem('katproxy_api_url') || (
-  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-    ? LOCAL_DEV_URL 
-    : DEFAULT_TUNNEL_URL
-);
+const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? LOCAL_DEV_URL
+  : DEFAULT_API_URL;
 
 const state = {
   protocol: 'all',
@@ -35,7 +33,6 @@ const el = {
   timerText: document.getElementById('timer-text'),
   progressCircle: document.getElementById('progress-circle'),
   btnManualRefresh: document.getElementById('btn-manual-refresh'),
-  btnSettings: document.getElementById('btn-settings'),
   protocolFilters: document.getElementById('protocol-filters'),
   toggleAlive: document.getElementById('toggle-alive'),
   searchInput: document.getElementById('search-input'),
@@ -53,11 +50,6 @@ const el = {
   btnNext: document.getElementById('btn-next'),
   pageIndicator: document.getElementById('page-indicator'),
   linkRawApi: document.getElementById('link-raw-api'),
-  settingsModal: document.getElementById('settings-modal'),
-  modalClose: document.getElementById('modal-close'),
-  modalCancel: document.getElementById('modal-cancel'),
-  modalSave: document.getElementById('modal-save'),
-  apiUrlInput: document.getElementById('api-url-input'),
   toastContainer: document.getElementById('toast-container')
 };
 
@@ -469,35 +461,6 @@ function initEvents() {
       state.page++;
       loadProxies();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  });
-
-  // Settings Modal
-  el.btnSettings.addEventListener('click', () => {
-    el.apiUrlInput.value = apiBase;
-    el.settingsModal.classList.remove('hidden');
-  });
-
-  el.modalClose.addEventListener('click', () => el.settingsModal.classList.add('hidden'));
-  el.modalCancel.addEventListener('click', () => el.settingsModal.classList.add('hidden'));
-
-  // Quick preset buttons in modal
-  el.settingsModal.querySelectorAll('.quick-endpoints button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      el.apiUrlInput.value = btn.dataset.url;
-    });
-  });
-
-  el.modalSave.addEventListener('click', () => {
-    const newUrl = el.apiUrlInput.value.trim().replace(/\/+$/, '');
-    if (newUrl) {
-      apiBase = newUrl;
-      localStorage.setItem('katproxy_api_url', newUrl);
-      showToast(`API endpoint updated to ${newUrl}`);
-      el.settingsModal.classList.add('hidden');
-      loadStats();
-      loadProxies();
-    }
   });
 }
 
